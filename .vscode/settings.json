@@ -1,0 +1,6 @@
+{
+  "python.defaultInterpreterPath": "/Users/suhasdev/Documents/.venv/bin/python",
+  "python.analysis.extraPaths": [
+    "/Users/suhasdev/Documents/.venv/lib/python3.13/site-packages"
+  ]
+}

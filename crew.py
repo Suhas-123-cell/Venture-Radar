@@ -8,7 +8,7 @@ load_dotenv()
 
 def build_llm() -> LLM:
     return LLM(
-        model="gemini/gemini-2.5-flash",
+        model="gemini/gemini-2.0-flash",
         api_key=os.getenv("GEMINI_API_KEY"),
         temperature=0.7,
     )
@@ -150,4 +150,4 @@ def run_discovery(industry: str) -> str:
     )
 
     result = crew.kickoff(inputs={"industry": industry})
-    return result.raw
+    return str(result)
