@@ -36,8 +36,8 @@ with gr.Blocks(title="VentureRadar", theme=gr.themes.Soft()) as demo:
 
     output = gr.Markdown(label="Discovery Report")
 
-    run_btn.click(fn=analyze, inputs=[industry_input], outputs=[output])
-    industry_input.submit(fn=analyze, inputs=[industry_input], outputs=[output])
+    run_btn.click(fn=analyze, inputs=[industry_input], outputs=[output])  # type: ignore[attr-defined]
+    industry_input.submit(fn=analyze, inputs=[industry_input], outputs=[output])  # type: ignore[attr-defined]
 
     gr.Examples(examples=EXAMPLES, inputs=industry_input)
 
