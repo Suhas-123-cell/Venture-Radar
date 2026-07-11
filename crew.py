@@ -1,17 +1,44 @@
 import os
+import time
+# pyrefly: ignore [missing-import]
+import litellm
+from litellm.exceptions import RateLimitError
 from crewai import Agent, Task, Crew, Process, LLM
 from crewai_tools import SerperDevTool
 from dotenv import load_dotenv
 
 load_dotenv()
 
+_orig_completion = litellm.completion
+
+def _completion_no_cache_breakpoint(*args, **kwargs):
+    if "messages" in kwargs:
+        kwargs["messages"] = [
+            {k: v for k, v in m.items() if k != "cache_breakpoint"}
+            if isinstance(m, dict) else m
+            for m in kwargs["messages"]
+        ]
+    for attempt in range(6):
+        try:
+            return _orig_completion(*args, **kwargs)  # pyrefly: ignore [not-callable]
+        except RateLimitError as e:
+            if attempt == 5:
+                raise
+            wait = 35 * (attempt + 1)
+            print(f"\n Rate limited — waiting {wait}s (retry {attempt + 1}/5)...")
+            time.sleep(wait)
+
+litellm.completion = _completion_no_cache_breakpoint
+
 
 def build_llm() -> LLM:
     return LLM(
-        model="gemini/gemini-2.5-flash",
-        api_key=os.getenv("GEMINI_API_KEY"),
+        model="groq/llama-3.1-8b-instant",
+        api_key=os.getenv("GROQ_API_KEY"),
         temperature=0.7,
     )
+
+
 
 
 def run_discovery(industry: str) -> str:
